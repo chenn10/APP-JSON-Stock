@@ -3,4 +3,5 @@
 資料來源:臺灣證券交易所 OpenAPI https://openapi.twse.com.tw/#/%E8%AD%89%E5%88%B8%E4%BA%A4%E6%98%93/get_exchangeReport_STOCK_DAY_ALL
 
 整理需要的資料後使用 https://jsonserve.com/ 產生新的json網址  https://api.jsonserve.com/WfdxPD
+
 展示圖:https://github.com/chenn10/APP-JSON-Stock/blob/afbab65037c93bed6c15f9d8c5ed394fafd41287/1.png

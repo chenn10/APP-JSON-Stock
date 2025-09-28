@@ -4,4 +4,4 @@
 
 整理需要的資料後使用 https://jsonserve.com/ 產生新的json網址  https://api.jsonserve.com/WfdxPD
 
-展示圖:https://github.com/chenn10/APP-JSON-Stock/blob/afbab65037c93bed6c15f9d8c5ed394fafd41287/1.png
+

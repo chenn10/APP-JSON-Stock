@@ -1,11 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color> <!-- 主要顏色，深藍色 -->
-    <color name="colorPrimaryDark">#303F9F</color> <!-- 主要顏色的暗色版本 -->
-    <color name="colorAccent">#FF4081</color> <!-- 強調顏色，粉紅色 -->
-    <color name="white">#FFFFFF</color> <!-- 白色 -->
-    <color name="black">#000000</color> <!-- 黑色 -->
-    <color name="green">#4CAF50</color> <!-- 綠色，用於表示股價上漲 -->
-    <color name="red">#F44336</color> <!-- 紅色，用於表示股價下跌 -->
-    <color name="grey">#9E9E9E</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="green">#4CAF50</color>
+    <color name="red">#F44336</color>
+    <color name="grey">#2C2C2C</color>
+    <color name="light_grey">#CCCCCC</color>
+    <color name="dark_grey">#444444</color>
 </resources>

@@ -151,3 +151,121 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:text="收盤價
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvChange"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="漲跌"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/green"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvTransaction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="成交筆數"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 統計分析卡片 -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="#2C2C2C"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="統計分析"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:id="@+id/tvPriceRange"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="價格區間"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="#CCCCCC"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvAvgPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="平均成交價"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="#CCCCCC"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvMarketCap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="估算市值"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="#CCCCCC"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 按鈕區域 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp">
+
+            <Button
+                android:id="@+id/shareButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:onClick="shareStock"
+                android:text="分享"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:backgroundTint="#4CAF50" />
+
+            <Button
+                android:id="@+id/backButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:onClick="goBack"
+                android:text="返回"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:backgroundTint="#FF4081" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

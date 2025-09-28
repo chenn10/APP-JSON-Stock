@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,11 +43,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void catchData() {
         String catchData = "https://api.jsonserve.com/WfdxPD"; 
-        ProgressDialog dialog = ProgressDialog.show(this, "讀取中", "請稍候", true);
+        ProgressDialog dialog = ProgressDialog.show(this, "正在載入股票資料", "請稍候...", true);
+        dialog.setCancelable(false);
+        
         new Thread(() -> {
             try {
                 URL url = new URL(catchData);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setConnectTimeout(10000);
+                connection.setReadTimeout(10000);
                 InputStream is = connection.getInputStream();
                 BufferedReader in = new BufferedReader(new InputStreamReader(is));
                 StringBuilder json = new StringBuilder();
@@ -59,23 +64,23 @@ public class MainActivity extends AppCompatActivity {
 
                 for (int i = 0; i < stocksArray.length(); i++) {
                     JSONObject stock = stocksArray.getJSONObject(i);
-                    String code = stock.getString("Code");
-                    String name = stock.getString("Name");
-                    String tradeVolume = stock.getString("TradeVolume");
-                    String tradeValue = stock.getString("TradeValue");
-                    // 繼續解析其他欄位...
-
+                    
                     HashMap<String, String> hashMap = new HashMap<>();
-                    hashMap.put("Code", code);
-                    hashMap.put("Name", name);
-                    hashMap.put("TradeVolume", tradeVolume);
-                    hashMap.put("TradeValue", tradeValue);
-                    // 將其他欄位加入 hashMap...
+                    hashMap.put("Code", stock.optString("Code", "N/A"));
+                    hashMap.put("Name", stock.optString("Name", "N/A"));
+                    hashMap.put("TradeVolume", stock.optString("TradeVolume", "0"));
+                    hashMap.put("TradeValue", stock.optString("TradeValue", "0"));
+                    hashMap.put("OpeningPrice", stock.optString("OpeningPrice", "0"));
+                    hashMap.put("HighestPrice", stock.optString("HighestPrice", "0"));
+                    hashMap.put("LowestPrice", stock.optString("LowestPrice", "0"));
+                    hashMap.put("ClosingPrice", stock.optString("ClosingPrice", "0"));
+                    hashMap.put("Change", stock.optString("Change", "0"));
+                    hashMap.put("Transaction", stock.optString("Transaction", "0"));
 
                     arrayList.add(hashMap);
                 }
 
-                Log.d(TAG, "catchData: " + arrayList);
+                Log.d(TAG, "載入成功，股票數量: " + arrayList.size());
 
                 runOnUiThread(() -> {
                     dialog.dismiss();
@@ -86,21 +91,35 @@ public class MainActivity extends AppCompatActivity {
                     recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
                     myAdapter = new MyAdapter();
                     recyclerView.setAdapter(myAdapter);
+                    
+                    Toast.makeText(this, "載入 " + arrayList.size() + " 筆股票資料", Toast.LENGTH_SHORT).show();
                 });
             } catch (MalformedURLException e) {
+                handleError(dialog, "網址錯誤");
                 e.printStackTrace();
             } catch (IOException e) {
+                handleError(dialog, "網路連線失敗，請檢查網路連線");
                 e.printStackTrace();
             } catch (JSONException e) {
+                handleError(dialog, "資料格式錯誤");
+                e.printStackTrace();
+            } catch (Exception e) {
+                handleError(dialog, "載入失敗，請稍後再試");
                 e.printStackTrace();
             }
-
         }).start();
+    }
+    
+    private void handleError(ProgressDialog dialog, String message) {
+        runOnUiThread(() -> {
+            dialog.dismiss();
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        });
     }
 
     private class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         public class ViewHolder extends RecyclerView.ViewHolder {
-            TextView tvCode, tvName, tvTradeVolume, tvTradeValue;
+            TextView tvCode, tvName, tvTradeVolume, tvTradeValue, tvClosingPrice, tvChange;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -108,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
                 tvName = itemView.findViewById(R.id.tvName);
                 tvTradeVolume = itemView.findViewById(R.id.tvTradeVolume);
                 tvTradeValue = itemView.findViewById(R.id.tvTradeValue);
+                tvClosingPrice = itemView.findViewById(R.id.tvClosingPrice);
+                tvChange = itemView.findViewById(R.id.tvChange);
             }
         }
 
@@ -122,19 +143,41 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             HashMap<String, String> item = arrayList.get(position);
+            
             holder.tvCode.setText(item.get("Code"));
             holder.tvName.setText(item.get("Name"));
-            holder.tvTradeVolume.setText("交易量：" + item.get("TradeVolume"));
-            holder.tvTradeValue.setText("交易價值：" + item.get("TradeValue"));
+            holder.tvTradeVolume.setText("成交量：" + formatNumber(item.get("TradeVolume")));
+            holder.tvTradeValue.setText("成交值：" + formatMoney(item.get("TradeValue")));
+            holder.tvClosingPrice.setText("收盤價：" + formatPrice(item.get("ClosingPrice")));
+            
+            // 設置漲跌顯示
+            String change = item.get("Change");
+            holder.tvChange.setText("漲跌：" + change);
+            try {
+                double changeValue = Double.parseDouble(change);
+                if (changeValue > 0) {
+                    holder.tvChange.setTextColor(getResources().getColor(R.color.green));
+                    holder.tvClosingPrice.setTextColor(getResources().getColor(R.color.green));
+                } else if (changeValue < 0) {
+                    holder.tvChange.setTextColor(getResources().getColor(R.color.red));
+                    holder.tvClosingPrice.setTextColor(getResources().getColor(R.color.red));
+                } else {
+                    holder.tvChange.setTextColor(getResources().getColor(R.color.white));
+                    holder.tvClosingPrice.setTextColor(getResources().getColor(R.color.white));
+                }
+            } catch (NumberFormatException e) {
+                holder.tvChange.setTextColor(getResources().getColor(R.color.white));
+                holder.tvClosingPrice.setTextColor(getResources().getColor(R.color.white));
+            }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), more_info.class);
-                    intent.putExtra("Code", item.get("Code"));
-                    intent.putExtra("Name", item.get("Name"));
-                    intent.putExtra("TradeVolume", item.get("TradeVolume"));
-                    intent.putExtra("TradeValue", item.get("TradeValue"));
+                    // 傳遞所有資料
+                    for (String key : item.keySet()) {
+                        intent.putExtra(key, item.get(key));
+                    }
                     v.getContext().startActivity(intent);
                 }
             });
@@ -144,7 +187,47 @@ public class MainActivity extends AppCompatActivity {
         public int getItemCount() {
             return arrayList.size();
         }
+        
+        private String formatNumber(String number) {
+            if (number == null || number.isEmpty() || number.equals("N/A")) return "N/A";
+            try {
+                long num = Long.parseLong(number.replace(",", ""));
+                if (num >= 100000000) {
+                    return String.format("%.1f億", num / 100000000.0);
+                } else if (num >= 10000) {
+                    return String.format("%.1f萬", num / 10000.0);
+                } else {
+                    return String.format("%,d", num);
+                }
+            } catch (NumberFormatException e) {
+                return number;
+            }
+        }
+        
+        private String formatMoney(String money) {
+            if (money == null || money.isEmpty() || money.equals("N/A")) return "N/A";
+            try {
+                long amount = Long.parseLong(money.replace(",", ""));
+                if (amount >= 100000000) {
+                    return String.format("%.1f億", amount / 100000000.0);
+                } else if (amount >= 10000) {
+                    return String.format("%.1f萬", amount / 10000.0);
+                } else {
+                    return String.format("%,d", amount);
+                }
+            } catch (NumberFormatException e) {
+                return money;
+            }
+        }
+        
+        private String formatPrice(String price) {
+            if (price == null || price.isEmpty() || price.equals("N/A")) return "N/A";
+            try {
+                double p = Double.parseDouble(price);
+                return String.format("%.2f", p);
+            } catch (NumberFormatException e) {
+                return price;
+            }
+        }
     }
 }
-
-
